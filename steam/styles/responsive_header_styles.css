@@ -1,0 +1,45 @@
+.responsive_header{
+    display: none;
+    background: #171a21;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 20;
+    box-shadow: 0 0 7px 0 rgb(0 0 0 / 75%);
+    overflow: hidden;
+    padding: 13px 8px;
+}
+
+.responsive_menu_logo{
+    position: absolute;
+    top: 9px;
+    cursor: pointer;
+    width: 36px;
+    height: 31px;
+    left: 8px;
+}
+
+.responsive_header img{
+    vertical-align: middle;
+}
+
+#menu{
+    display: none;
+}
+
+#menu:checked ~ .side_menu_panel{
+    display: block;
+}
+
+.responsive_menu_logo > label{
+    cursor: pointer;
+}
+
+.side_menu_panel{
+    height: 50px; 
+    width: 50px; 
+    background-color: aqua; 
+    display:none
+}
