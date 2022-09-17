@@ -116,7 +116,7 @@
     position: absolute;
     left: 80.4688px;
     top: 64px;
-    opacity: 0;
+    display: none;
     transition: 0.3s;
 }
 
@@ -135,8 +135,12 @@
 }
 
 .community_hoverer:hover + .community_navigation{
-    opacity: 1;
+    display: block;
     transition: 0.3s;
+}
+
+.community_navigation:hover{
+    display: block;
 }
 
 .store_navigation{
@@ -148,16 +152,19 @@
     position: absolute;
     left: 1px;
     top: 64px;
-    pointer-events: none;
-    opacity: 0;
+    display: none;
     transition: 0.3s;
 }
 
 .store_hoverer:hover + .store_navigation{
-    opacity: 1;
+    display: block;
     transition: 0.3s;
 }
 
 .white_hover:hover{
     color: #ffffff;
+}
+
+.store_navigation:hover{
+    display: block;
 }
