@@ -6,10 +6,9 @@
     left: 0;
     right: 0;
     text-align: center;
-    z-index: 20;
     box-shadow: 0 0 7px 0 rgb(0 0 0 / 75%);
-    overflow: hidden;
     padding: 13px 8px;
+    z-index: 1;
 }
 
 .responsive_menu_logo{
@@ -26,20 +25,22 @@
 }
 
 #menu{
-    display: none;
+    position: absolute;
+    opacity: 0;
+    z-index: 10;
 }
 
-#menu:checked ~ .side_menu_panel{
-    display: block;
+#menu:checked{
+    width: 100%;
+    height: 100vh;
 }
 
 .responsive_menu_logo > label{
     cursor: pointer;
 }
 
-.side_menu_panel{
-    height: 50px; 
-    width: 50px; 
-    background-color: aqua; 
-    display:none
+#menu:checked ~ .side_menu_overflow{
+    visibility: visible;
+    opacity: 1.0;
+    transition: visibility 0s, opacity 0.5s;
 }

@@ -1,7 +1,7 @@
 .main_content{
     margin: 0 auto;
     padding: 0px 8px;
-    width: 100%;
+    /* width: 100%; */
     background: radial-gradient(rgba(24, 26, 33, 0) 0%, #181A21 100%) fixed no-repeat, 
             url(https://store.cloudflare.steamstatic.com/public/shared/images/joinsteam/new_login_bg_strong_mask.jpg) center top no-repeat, #181A21;
 }

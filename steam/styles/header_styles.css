@@ -117,6 +117,7 @@
     left: 80.4688px;
     top: 64px;
     display: none;
+    opacity: 0;
     transition: 0.3s;
 }
 
@@ -136,11 +137,13 @@
 
 .community_hoverer:hover + .community_navigation{
     display: block;
+    opacity: 1;
     transition: 0.3s;
 }
 
 .community_navigation:hover{
     display: block;
+    opacity: 1;
 }
 
 .store_navigation{
@@ -153,10 +156,12 @@
     left: 1px;
     top: 64px;
     display: none;
+    opacity: 0;
     transition: 0.3s;
 }
 
 .store_hoverer:hover + .store_navigation{
+    opacity: 1;
     display: block;
     transition: 0.3s;
 }
@@ -167,4 +172,5 @@
 
 .store_navigation:hover{
     display: block;
+    opacity: 1;
 }

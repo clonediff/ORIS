@@ -12,6 +12,10 @@
         min-height: calc( 100vh - 120px );
     }
 
+    #menu:checked ~ .responsive_main_content{
+        padding-bottom: 0px;
+    }
+
     .footer, .footer_spacer {
         display: none;
     }
@@ -27,6 +31,10 @@
 }
 
 @media screen and (max-width: 700px){
+    .responsive_header {
+        position: inherit;
+    }
+
     .main_content {
         background: radial-gradient(rgba(24, 26, 33, 0) 0%, #181A21 100%) fixed no-repeat, 
         url(https://store.cloudflare.steamstatic.com/public/shared/images/joinsteam/new_login_bg_strong_mask_mobile.jpg) center top no-repeat, #181A21;
