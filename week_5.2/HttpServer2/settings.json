@@ -1,0 +1,18 @@
+﻿{
+  "Port": 8888,
+  "Google": {
+    "RawUrl": "/google",
+    "MainFolder": "Templates\\Google",
+    "MainHTML": "index.html"
+  },
+  "Steam": {
+    "RawUrl": "/steam",
+    "MainFolder": "Templates\\Steam",
+    "MainHTML": "index.html"
+  },
+  "MainPage": {
+    "RawUrl": "/",
+    "MainFolder": "Templates\\MainPage",
+    "MainHTML": "index.html"
+  }
+}
