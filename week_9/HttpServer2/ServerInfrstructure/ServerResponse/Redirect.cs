@@ -18,7 +18,9 @@ namespace HttpServer2.ServerResponse
 
         public void ExecuteResult(MyContext context)
         {
-            context.Context.Response.Redirect(RedirectUri);
+            context.Context.Response.RedirectLocation = RedirectUri;
+            context.Context.Response.StatusCode = 302;
+            context.Context.Response.OutputStream.Close();
         }
     }
 }

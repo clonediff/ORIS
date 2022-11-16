@@ -28,7 +28,7 @@ namespace HttpServer2.Controllers
         }
 
         [HttpPOST("/")]
-        public IControllerResult PostAccounts(string login, string password, HttpListenerResponse response)
+        public IControllerResult PostAccounts(string login, string password)
         {
             orm
                 .Insert(new Account { Login = login, Password = password });
