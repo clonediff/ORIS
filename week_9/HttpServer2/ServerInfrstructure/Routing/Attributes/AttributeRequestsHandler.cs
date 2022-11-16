@@ -1,7 +1,7 @@
-﻿using HttpServer2.Routing;
+﻿using HttpServer2.CookiesAndSessions;
+using HttpServer2.Routing;
 using HttpServer2.Routing.Attributes;
 using HttpServer2.ServerResponse;
-using Microsoft.AspNetCore.Builder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +36,6 @@ namespace HttpServer2.Attributes
                     var methodType = methodTypeAttr.Name.Replace("Http", "").Replace("Attribute", "");
                     routes.AddRoute(Enum.Parse<HttpMethod>(methodType), fullRoute, method, methodArgumentToOrderIndex);
                 }
-                //controllerInstances[controller] = Activator.CreateInstance(controller)!;
             }
         }
 
@@ -64,13 +63,14 @@ namespace HttpServer2.Attributes
                 BindingFlags.Instance).Where(x => x.FieldType == typeof(MyORM)))
                 x.FieldType.GetField("connectionString")?.SetValue(x.GetValue(controller), context.Settings.DBConnectionString);
 
-
             var ret = method.Invoke(controller, parameters);
 
             if (ret is IControllerResult result)
                 result.ExecuteResult(context);
             else
                 new DefaultJsonResult(ret).ExecuteResult(context);
+
+            response.OutputStream.Close();
 
             return true;
         }

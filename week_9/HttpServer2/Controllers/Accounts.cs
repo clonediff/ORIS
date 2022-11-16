@@ -1,7 +1,12 @@
 ﻿using HttpServer2.Attributes;
 using HttpServer2.Models;
+using HttpServer2.ServerInfrstructure.CookiesAndSessions;
+using HttpServer2.ServerInfrstructure.CookiesAndSessions.Attributes;
+using HttpServer2.ServerInfrstructure.ServerResponse;
 using HttpServer2.ServerResponse;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 
@@ -28,9 +33,13 @@ namespace HttpServer2.Controllers
         }
 
         [HttpPOST("/")]
-        public bool PostAccounts(string login, string password)
+        public IControllerResult PostAccounts(string login, string password)
         {
-            return orm.Select<Account>().Where(x => x.Login == login && x.Password == password).Any();
+            var account = orm.Select<Account>().Where(x => x.Login == login && x.Password == password).FirstOrDefault();
+            
+            if 
+            var cookie = (account is not null, new SessionIdCookie { IsAuthorize = true, Id = account?.Id ?? -1 }, TimeSpan.FromMinutes(5));
+            return new CookieResult(cookie);
         }
     }
 }
