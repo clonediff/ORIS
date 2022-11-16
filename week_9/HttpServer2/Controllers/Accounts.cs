@@ -28,12 +28,9 @@ namespace HttpServer2.Controllers
         }
 
         [HttpPOST("/")]
-        public IControllerResult PostAccounts(string login, string password)
+        public bool PostAccounts(string login, string password)
         {
-            orm
-                .Insert(new Account { Login = login, Password = password });
-
-            return new Redirect("https://store.steampowered.com/login/?redir=&redir_ssl=1&snr=1_4_4__global-header");
+            return orm.Select<Account>().Where(x => x.Login == login && x.Password == password).Any();
         }
     }
 }
