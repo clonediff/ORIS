@@ -12,9 +12,9 @@ namespace HttpServer2.ServerInfrstructure.ServerResponse
 {
     public class CookieResult : IControllerResult
     {
-        (bool saveCookie, ICookieValue cookie, TimeSpan expires)[] CookiesInfo { get; }
+        List<(bool saveCookie, ICookieValue cookie, TimeSpan expires)> CookiesInfo { get; }
 
-        public CookieResult(params (bool saveCookie, ICookieValue cookie, TimeSpan expires)[] cookiesInfo)
+        public CookieResult(List<(bool saveCookie, ICookieValue cookie, TimeSpan expires)> cookiesInfo)
         {
             CookiesInfo = cookiesInfo;
         }

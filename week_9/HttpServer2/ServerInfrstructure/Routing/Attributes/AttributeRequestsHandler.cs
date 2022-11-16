@@ -1,5 +1,4 @@
-﻿using HttpServer2.CookiesAndSessions;
-using HttpServer2.Routing;
+﻿using HttpServer2.Routing;
 using HttpServer2.Routing.Attributes;
 using HttpServer2.ServerResponse;
 using System;

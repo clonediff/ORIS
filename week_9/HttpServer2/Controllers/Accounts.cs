@@ -1,7 +1,7 @@
 ﻿using HttpServer2.Attributes;
 using HttpServer2.Models;
+using HttpServer2.MyCookieValues;
 using HttpServer2.ServerInfrstructure.CookiesAndSessions;
-using HttpServer2.ServerInfrstructure.CookiesAndSessions.Attributes;
 using HttpServer2.ServerInfrstructure.ServerResponse;
 using HttpServer2.ServerResponse;
 using System;
@@ -36,10 +36,10 @@ namespace HttpServer2.Controllers
         public IControllerResult PostAccounts(string login, string password)
         {
             var account = orm.Select<Account>().Where(x => x.Login == login && x.Password == password).FirstOrDefault();
-            
-            if 
-            var cookie = (account is not null, new SessionIdCookie { IsAuthorize = true, Id = account?.Id ?? -1 }, TimeSpan.FromMinutes(5));
-            return new CookieResult(cookie);
+            var cookies = new List<(bool, ICookieValue, TimeSpan)>();
+            if (account is not null)
+                cookies.Add((true, new SessionIdCookie { IsAuthorize = true, Id = account.Id }, TimeSpan.FromMinutes(5)));
+            return new CookieResult(cookies);
         }
     }
 }
