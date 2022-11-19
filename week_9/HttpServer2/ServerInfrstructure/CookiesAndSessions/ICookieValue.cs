@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HttpServer2.ServerResponse;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,6 +10,8 @@ namespace HttpServer2.ServerInfrstructure.CookiesAndSessions
 {
     public interface ICookieValue
     {
+        IControllerResult IfNotExists { get; }
+
         Cookie AsCookie(TimeSpan expires);
     }
 }

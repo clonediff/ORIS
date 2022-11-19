@@ -1,10 +1,14 @@
 ﻿using HttpServer2.Routing;
 using HttpServer2.Routing.Attributes;
+using HttpServer2.ServerInfrstructure.CookiesAndSessions;
 using HttpServer2.ServerResponse;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 
 namespace HttpServer2.Attributes
 {
@@ -55,12 +59,20 @@ namespace HttpServer2.Attributes
                 out var method, out var parameters))
                 return false;
 
+            if (!CheckCookies(context, method, out var notfound))
+            {
+                notfound.ExecuteResult(context);
+                response.OutputStream.Close();
+                return true;
+            }
+
             var controller = Activator.CreateInstance(method.DeclaringType!);
 
             foreach (var x in method.DeclaringType!.GetFields(
                 BindingFlags.NonPublic |
                 BindingFlags.Instance).Where(x => x.FieldType == typeof(MyORM)))
                 x.FieldType.GetField("connectionString")?.SetValue(x.GetValue(controller), context.Settings.DBConnectionString);
+
 
             var ret = method.Invoke(controller, parameters);
 
@@ -70,6 +82,41 @@ namespace HttpServer2.Attributes
                 new DefaultJsonResult(ret).ExecuteResult(context);
 
             response.OutputStream.Close();
+
+            return true;
+        }
+
+        bool CheckCookies(MyContext context, MethodInfo method, out IControllerResult notFound)
+        {
+            var request = context.Context.Request;
+            var response = context.Context.Response;
+
+            var methods = method
+                .GetCustomAttributes()
+                .Where(x => x.GetType().IsGenericType &&
+                    x.GetType().GetGenericTypeDefinition() == typeof(CheckCookie<>));
+
+            var checkCookies = methods
+                .Select(x => (CheckCookie<ICookieValue>)x);
+            notFound = default!;
+
+            foreach (var checkCookie in checkCookies)
+            {
+                var cookieType = checkCookie.GetType().GetGenericArguments()[0];
+                var cookieInst = Activator.CreateInstance(cookieType) as ICookieValue;
+                var cookieName = cookieType.Name.Replace("Cookie", "");
+                var foundCookie = context.Context.Request.Cookies[cookieName];
+                if (foundCookie is null)
+                {
+                    notFound = cookieInst!.IfNotExists;
+                    return false;
+                }
+
+                var cookieValue = JsonSerializer.Deserialize<ICookieValue>(foundCookie.Value);
+                var property = cookieValue!.GetType().GetProperty(checkCookie.PropertyName);
+                if (!property.GetValue(cookieValue).Equals(checkCookie.Value))
+                    return false;
+            }
 
             return true;
         }

@@ -6,9 +6,8 @@ using HttpServer2.ServerInfrstructure.ServerResponse;
 using HttpServer2.ServerResponse;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Net;
 
 namespace HttpServer2.Controllers
 {
@@ -17,7 +16,10 @@ namespace HttpServer2.Controllers
     {
         MyORM orm = new MyORM();
 
+
+
         [HttpGET("/")]
+        [CheckCookie<SessionIdCookie>(nameof(SessionIdCookie.IsAuthorize), true)]
         public IEnumerable<Account> GetAccounts()
         {
             return orm.Select<Account>();
@@ -38,7 +40,7 @@ namespace HttpServer2.Controllers
             var account = orm.Select<Account>().Where(x => x.Login == login && x.Password == password).FirstOrDefault();
             var cookies = new List<(bool, ICookieValue, TimeSpan)>();
             if (account is not null)
-                cookies.Add((true, new SessionIdCookie { IsAuthorize = true, Id = account.Id }, TimeSpan.FromMinutes(5)));
+                cookies.Add((true, new SessionIdCookie { IsAuthorize = true, Id = account.Id }, TimeSpan.FromMinutes(50)));
             return new CookieResult(cookies);
         }
     }
