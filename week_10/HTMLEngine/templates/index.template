@@ -1,0 +1,56 @@
+﻿<html>
+	<head></head>
+	<body>
+
+		<h1>Профессор</h1>
+		<span>Фамилия: {{Model.LastName}}</span>
+		<br>
+		<span>Имя: {{Model.FirstName}}</span>
+		<br>
+		<span>Отчество: {{Model.MiddleName}}</span>
+		<br>
+		<span>Дисциплина: {{Model.Disciplines[0].Name}}</span>
+		<br>
+		<span>Кол-во студентов: {{Model.Disciplines[0].Students.Count}}</span>
+		<br>
+
+		<table>
+			<tr>
+				<th>№</th>
+				<th>Студенческий</th>
+				<th>Фамилия</th>
+				<th>Имя</th>
+				<th>Отчество</th>
+			</tr>
+			{{i = 0}}
+			{{for student in Model.Disciplines[0].Students }}
+				<tr>
+					<td>{{i + 1}}</td>
+					<td>{{student.StudentId}}</td>
+					<td>{{student.LastName}}</td>
+					<td>{{student.FirstName}}</td>
+					<td>{{student.MiddleName}}</td>
+				</tr>
+				{{i = i + 1}}
+			{{end}}
+		</table>
+
+		{{if Model.Disciplines[0].Students.Count > 15}}
+			<span>Группа переполнена</span>
+			<br>
+		{{elif 10 <= Model.Disciplines[0].Students.Count and Model.Disciplines[0].Students.Count <= 15}}
+			<span>Группа как надо</span>
+			<br>
+		{{else}}
+			<span>Недобор по группе</span>
+			<br>
+		{{end}}
+
+		<h3>Все дисциплины</h3>
+		<ul>
+			{{for discipline in Model.Disciplines}}
+				<li>{{discipline.Name}}</li>
+			{{end}}
+		</ul>
+	</body>
+</html>
