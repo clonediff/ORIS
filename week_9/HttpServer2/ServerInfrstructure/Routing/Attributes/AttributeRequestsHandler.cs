@@ -91,30 +91,26 @@ namespace HttpServer2.Attributes
             var request = context.Context.Request;
             var response = context.Context.Response;
 
-            var methods = method
-                .GetCustomAttributes()
-                .Where(x => x.GetType().IsGenericType &&
-                    x.GetType().GetGenericTypeDefinition() == typeof(CheckCookie<>));
+            var checkCookies = method
+                .GetCustomAttributes<CheckCookie>();
 
-            var checkCookies = methods
-                .Select(x => (CheckCookie<ICookieValue>)x);
             notFound = default!;
 
             foreach (var checkCookie in checkCookies)
             {
-                var cookieType = checkCookie.GetType().GetGenericArguments()[0];
+                var cookieType = checkCookie.Type;
                 var cookieInst = Activator.CreateInstance(cookieType) as ICookieValue;
+                if (cookieInst == null) throw new ArgumentException("CheckValue must contains only ICookieValue type for checking");
                 var cookieName = cookieType.Name.Replace("Cookie", "");
-                var foundCookie = context.Context.Request.Cookies[cookieName];
+                var foundCookie = request.Cookies[cookieName];
                 if (foundCookie is null)
                 {
                     notFound = cookieInst!.IfNotExists;
                     return false;
                 }
-
-                var cookieValue = JsonSerializer.Deserialize<ICookieValue>(foundCookie.Value);
+                var cookieValue = CookieValueSerializer.Deserialize(foundCookie.Value, cookieType);
                 var property = cookieValue!.GetType().GetProperty(checkCookie.PropertyName);
-                if (!property.GetValue(cookieValue).Equals(checkCookie.Value))
+                if (!checkCookie.Value.Equals(property.GetValue(cookieValue)))
                     return false;
             }
 

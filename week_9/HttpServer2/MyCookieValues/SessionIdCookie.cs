@@ -9,7 +9,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace HttpServer2.MyCookieValues
 {
@@ -23,7 +22,7 @@ namespace HttpServer2.MyCookieValues
 
         public Cookie AsCookie(TimeSpan expires)
         {
-            var value = JsonSerializer.Serialize(this);
+            var value = CookieValueSerializer.Serialize(this);
             return new Cookie { Name = "SessionId", Value = value, Expires = DateTime.Now + expires };
         }
     }

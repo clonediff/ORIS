@@ -83,9 +83,15 @@ public class HttpServer : IDisposable
         while (Status == ServerStatus.Start)
         {
             var context = await _listener.GetContextAsync();
-            if (!_responseSender.SendStaticFile(context, _settings) && 
-                !_handler.HandleController(new MyContext(context, _settings)))
+            try
+            {
+                if (!_responseSender.SendStaticFile(context, _settings) &&
+                    !_handler.HandleController(new MyContext(context, _settings)))
                     NotFound(context, _settings);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 

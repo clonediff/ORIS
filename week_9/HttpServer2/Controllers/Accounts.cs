@@ -19,13 +19,14 @@ namespace HttpServer2.Controllers
 
 
         [HttpGET("/")]
-        [CheckCookie<SessionIdCookie>(nameof(SessionIdCookie.IsAuthorize), true)]
+        [CheckCookie(typeof(SessionIdCookie), nameof(SessionIdCookie.IsAuthorize), true)]
         public IEnumerable<Account> GetAccounts()
         {
             return orm.Select<Account>();
         }
 
         [HttpGET("/{id}")]
+        [CheckCookie(typeof(SessionIdCookie), nameof(SessionIdCookie.IsAuthorize), true)]
         public Account? GetAccountById(int id)
         {
             return orm
@@ -40,7 +41,7 @@ namespace HttpServer2.Controllers
             var account = orm.Select<Account>().Where(x => x.Login == login && x.Password == password).FirstOrDefault();
             var cookies = new List<(bool, ICookieValue, TimeSpan)>();
             if (account is not null)
-                cookies.Add((true, new SessionIdCookie { IsAuthorize = true, Id = account.Id }, TimeSpan.FromMinutes(50)));
+                cookies.Add((true, new SessionIdCookie { IsAuthorize = true, Id = account.Id }, TimeSpan.FromMinutes(1)));
             return new CookieResult(cookies);
         }
     }

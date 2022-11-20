@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 namespace HttpServer2.ServerInfrstructure.CookiesAndSessions
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class CheckCookie<T> : Attribute
-        where T : ICookieValue
+    public class CheckCookie : Attribute
     {
+        public Type Type { get; }
+
         public string PropertyName { get; }
         public object? Value { get; }
 
-        public CheckCookie(string name, object? value)
+        public CheckCookie(Type type, string name, object? value)
         {
+            Type = type;
             PropertyName = name;
             Value = value;
         }
