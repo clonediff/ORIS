@@ -91,6 +91,8 @@ public class HttpServer : IDisposable
             } catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                context.Response.StatusCode = 500;
+                context.Response.Close();
             }
         }
     }

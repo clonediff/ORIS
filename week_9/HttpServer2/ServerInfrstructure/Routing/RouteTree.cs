@@ -131,7 +131,14 @@ namespace HttpServer2.Routing
                     value = val;
                 if (namesToValue.TryGetValue(name, out var obj))
                     value = obj;
-                result[i] = Convert.ChangeType(value, parameters[i].ParameterType);
+                try
+                {
+                    result[i] = Convert.ChangeType(value, parameters[i].ParameterType);
+                }
+                catch
+                {
+                    result[i] = value;
+                }
             }
 
             return result;

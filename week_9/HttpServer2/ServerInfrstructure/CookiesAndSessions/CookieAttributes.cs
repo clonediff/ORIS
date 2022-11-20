@@ -18,9 +18,31 @@ namespace HttpServer2.ServerInfrstructure.CookiesAndSessions
 
         public CheckCookie(Type type, string name, object? value)
         {
+            if (!typeof(ICookieValue).IsAssignableFrom(type))
+                throw new ArgumentException($"CheckValue must contains only ICookieValue type for checking: {type} isn't ICookieValue");
             Type = type;
             PropertyName = name;
             Value = value;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter)]
+    public class FromCookie : Attribute
+    {
+        public Type Type { get; }
+        public string PropertyName { get; }
+
+        public FromCookie(Type type)
+        {
+            if (!typeof(ICookieValue).IsAssignableFrom(type))
+                throw new ArgumentException("CheckValue must contains only ICookieValue type for checking");
+            Type = type;
+        }
+
+        public FromCookie(Type type, string propertyName)
+            : this(type)
+        {
+            PropertyName = propertyName;
         }
     }
 }

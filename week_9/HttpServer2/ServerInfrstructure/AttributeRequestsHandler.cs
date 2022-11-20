@@ -2,6 +2,7 @@
 using HttpServer2.Routing.Attributes;
 using HttpServer2.ServerInfrstructure.CookiesAndSessions;
 using HttpServer2.ServerResponse;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -66,12 +67,16 @@ namespace HttpServer2.Attributes
                 return true;
             }
 
+            AddCookieValuesToParameters(context, method, parameters);
+
             var controller = Activator.CreateInstance(method.DeclaringType!);
 
             foreach (var x in method.DeclaringType!.GetFields(
                 BindingFlags.NonPublic |
                 BindingFlags.Instance).Where(x => x.FieldType == typeof(MyORM)))
-                x.FieldType.GetField("connectionString")?.SetValue(x.GetValue(controller), context.Settings.DBConnectionString);
+                x.FieldType
+                    .GetField(nameof(MyORM.connectionString))?
+                    .SetValue(x.GetValue(controller), context.Settings.DBConnectionString);
 
 
             var ret = method.Invoke(controller, parameters);
@@ -86,10 +91,29 @@ namespace HttpServer2.Attributes
             return true;
         }
 
+        private void AddCookieValuesToParameters(MyContext context, MethodInfo method, object[] parameters)
+        {
+            var methodParameters = method.GetParameters()
+                .Select((x, i) => (x, i))
+                .Where(pair => Attribute.IsDefined(pair.x, typeof(FromCookie)));
+            foreach (var (parameter, index) in methodParameters)
+            {
+                var fromCookieAttr = parameter.GetCustomAttribute<FromCookie>()!;
+                var cookieName = fromCookieAttr.Type.Name.Replace("Cookie", "");
+                var propertyName = fromCookieAttr.PropertyName ?? parameter.Name;
+                var cookie = context.Context.Request.Cookies[cookieName];
+                if (cookie is null)
+                    throw new ArgumentException($"Required cookie {cookieName} not exists");
+                var cookieValue = CookieValueSerializer.Deserialize(cookie.Value, fromCookieAttr.Type);
+                var property = cookieValue.GetType().GetProperty(propertyName!) ??
+                    throw new ArgumentException($"{fromCookieAttr.Type} doesn't contains property {propertyName}");
+                parameters[index] = Convert.ChangeType(property.GetValue(cookieValue), parameter.ParameterType)!;
+            }
+        }
+
         bool CheckCookies(MyContext context, MethodInfo method, out IControllerResult notFound)
         {
             var request = context.Context.Request;
-            var response = context.Context.Response;
 
             var checkCookies = method
                 .GetCustomAttributes<CheckCookie>();
@@ -100,7 +124,6 @@ namespace HttpServer2.Attributes
             {
                 var cookieType = checkCookie.Type;
                 var cookieInst = Activator.CreateInstance(cookieType) as ICookieValue;
-                if (cookieInst == null) throw new ArgumentException("CheckValue must contains only ICookieValue type for checking");
                 var cookieName = cookieType.Name.Replace("Cookie", "");
                 var foundCookie = request.Cookies[cookieName];
                 if (foundCookie is null)
@@ -109,8 +132,9 @@ namespace HttpServer2.Attributes
                     return false;
                 }
                 var cookieValue = CookieValueSerializer.Deserialize(foundCookie.Value, cookieType);
-                var property = cookieValue!.GetType().GetProperty(checkCookie.PropertyName);
-                if (!checkCookie.Value.Equals(property.GetValue(cookieValue)))
+                var property = cookieValue!.GetType().GetProperty(checkCookie.PropertyName) ??
+                    throw new ArgumentException($"{cookieType} doesn't contains property {checkCookie.PropertyName}");
+                if (!checkCookie.Value!.Equals(property.GetValue(cookieValue)))
                     return false;
             }
 
