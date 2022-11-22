@@ -71,14 +71,6 @@ namespace HttpServer2.Attributes
 
             var controller = Activator.CreateInstance(method.DeclaringType!);
 
-            foreach (var x in method.DeclaringType!.GetFields(
-                BindingFlags.NonPublic |
-                BindingFlags.Instance).Where(x => x.FieldType == typeof(MyORM)))
-                x.FieldType
-                    .GetField(nameof(MyORM.connectionString))?
-                    .SetValue(x.GetValue(controller), context.Settings.DBConnectionString);
-
-
             var ret = method.Invoke(controller, parameters);
 
             if (ret is IControllerResult result)

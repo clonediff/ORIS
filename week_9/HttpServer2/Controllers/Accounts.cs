@@ -4,10 +4,8 @@ using HttpServer2.MyCookieValues;
 using HttpServer2.ServerInfrstructure.CookiesAndSessions;
 using HttpServer2.ServerInfrstructure.ServerResponse;
 using HttpServer2.ServerResponse;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace HttpServer2.Controllers
@@ -15,7 +13,7 @@ namespace HttpServer2.Controllers
     [ApiController]
     public class Accounts
     {
-        MyORM orm = new MyORM();
+        MyORM orm = MyORM.Instance;
 
 
 

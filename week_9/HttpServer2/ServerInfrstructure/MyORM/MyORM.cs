@@ -15,7 +15,7 @@ namespace HttpServer2
 {
     public class MyORM
     {
-        public string connectionString;
+        private string connectionString;
         static Dictionary<Type, string> tableNames;
         static Dictionary<PropertyInfo, string> columnNames;
         static Dictionary<(Type table, string column), PropertyInfo> propertyByColumnName;
@@ -53,10 +53,17 @@ namespace HttpServer2
             }
         }
 
-        //public MyORM(string connectionString)
-        //{
-        //    this.connectionString = connectionString;
-        //}
+        private MyORM(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
+        private static Lazy<MyORM> inst;
+
+        public static void Init(string connectionString)
+            => inst = new Lazy<MyORM>(() => new MyORM(connectionString));
+
+        public static MyORM Instance => inst.Value;
 
         public int ExecuteNonQuery(string query)
         {

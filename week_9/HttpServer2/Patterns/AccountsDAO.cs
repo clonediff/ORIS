@@ -6,7 +6,7 @@ namespace HttpServer2
 {
     public class AccountsDAO : IAccountsDAO
     {
-        private MyORM orm = new MyORM();
+        private MyORM orm = MyORM.Instance;
 
         public int Create(Account obj)
             => orm.Insert(obj);

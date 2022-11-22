@@ -150,7 +150,7 @@ namespace HttpServer2.Routing
         {
             method = default!;
             parameters = default!;
-            route = route.Trim('/').ToLower();
+            route = route.ToLower();
 
             if (route == "")
                 return root.Methods.TryGetValue(methodType, out method!);

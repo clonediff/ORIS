@@ -40,7 +40,7 @@ public class HttpServer : IDisposable
             return;
         }
 
-        //MyORM.connectionString = _settings.DBConnectionString;
+        MyORM.Init(_settings.DBConnectionString);
 
 
         var mainUri = $"http://localhost:{_settings.Port}/";
