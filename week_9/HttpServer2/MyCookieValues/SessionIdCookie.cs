@@ -14,8 +14,7 @@ namespace HttpServer2.MyCookieValues
 {
     internal class SessionIdCookie : ICookieValue
     {
-        public bool IsAuthorize { get; set; }
-        public int? Id { get; set; }
+        public Guid SessionId { get; set; }
 
         [JsonIgnore]
         public IControllerResult IfNotExists { get; } = new NotAuthorized();
@@ -24,6 +23,12 @@ namespace HttpServer2.MyCookieValues
         {
             var value = CookieValueSerializer.Serialize(this);
             return new Cookie { Name = "SessionId", Value = value, Expires = DateTime.Now + expires };
+        }
+
+        public Cookie AsCookie()
+        {
+            var value = CookieValueSerializer.Serialize(this);
+            return new Cookie { Name = "SessionId", Value = value };
         }
     }
 }

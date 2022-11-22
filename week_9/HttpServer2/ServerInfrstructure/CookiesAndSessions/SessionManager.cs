@@ -14,7 +14,7 @@ namespace HttpServer2.ServerInfrstructure.CookiesAndSessions
 
         private static Lazy<SessionManager> _sessionManager = new(() => new SessionManager());
 
-        public SessionManager Inst => _sessionManager.Value;
+        public static SessionManager Inst => _sessionManager.Value;
 
         public Session CreateSession(int accountId, string login, DateTime createdTime = default)
         {

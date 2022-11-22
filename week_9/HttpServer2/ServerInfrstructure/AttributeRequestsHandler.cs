@@ -123,6 +123,8 @@ namespace HttpServer2.Attributes
                     notFound = cookieInst!.IfNotExists;
                     return false;
                 }
+                if (checkCookie.PropertyName == default)
+                    continue;
                 var cookieValue = CookieValueSerializer.Deserialize(foundCookie.Value, cookieType);
                 var property = cookieValue!.GetType().GetProperty(checkCookie.PropertyName) ??
                     throw new ArgumentException($"{cookieType} doesn't contains property {checkCookie.PropertyName}");

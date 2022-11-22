@@ -14,5 +14,6 @@ namespace HttpServer2.ServerInfrstructure.CookiesAndSessions
         IControllerResult IfNotExists { get; }
 
         Cookie AsCookie(TimeSpan expires);
+        Cookie AsCookie();
     }
 }

@@ -16,12 +16,19 @@ namespace HttpServer2.ServerInfrstructure.CookiesAndSessions
         public string PropertyName { get; }
         public object? Value { get; }
 
-        public CheckCookie(Type type, string name, object? value)
+        public CheckCookie(Type type)
         {
             if (!typeof(ICookieValue).IsAssignableFrom(type))
                 throw new ArgumentException($"CheckValue must contains only ICookieValue type for checking: {type} isn't ICookieValue");
             Type = type;
-            PropertyName = name;
+        }
+
+        public CheckCookie(Type type, string propertyName, object? value)
+            : this(type)
+        {
+            if (string.IsNullOrEmpty(propertyName))
+                throw new ArgumentException("PropertyName can't be empty");
+            PropertyName = propertyName;
             Value = value;
         }
     }
@@ -35,13 +42,15 @@ namespace HttpServer2.ServerInfrstructure.CookiesAndSessions
         public FromCookie(Type type)
         {
             if (!typeof(ICookieValue).IsAssignableFrom(type))
-                throw new ArgumentException("CheckValue must contains only ICookieValue type for checking");
+                throw new ArgumentException($"FromCookie must contains only ICookieValue type for checking: {type} isn't ICookieValue");
             Type = type;
         }
 
         public FromCookie(Type type, string propertyName)
             : this(type)
         {
+            if (string.IsNullOrEmpty(propertyName))
+                throw new ArgumentException("PropertyName can't be empty");
             PropertyName = propertyName;
         }
     }

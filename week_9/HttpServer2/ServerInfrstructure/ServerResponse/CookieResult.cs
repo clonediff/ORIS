@@ -12,9 +12,9 @@ namespace HttpServer2.ServerInfrstructure.ServerResponse
 {
     public class CookieResult : IControllerResult
     {
-        List<(bool saveCookie, ICookieValue cookie, TimeSpan expires)> CookiesInfo { get; }
+        List<(ICookieValue cookie, TimeSpan expires)> CookiesInfo { get; }
 
-        public CookieResult(List<(bool saveCookie, ICookieValue cookie, TimeSpan expires)> cookiesInfo)
+        public CookieResult(List<(ICookieValue cookie, TimeSpan expires)> cookiesInfo)
         {
             CookiesInfo = cookiesInfo;
         }
@@ -22,9 +22,11 @@ namespace HttpServer2.ServerInfrstructure.ServerResponse
         public void ExecuteResult(MyContext context)
         {
             var response = context.Context.Response;
-            foreach (var (saveCookie, cookie, expires) in CookiesInfo)
-                if (saveCookie)
+            foreach (var (cookie, expires) in CookiesInfo)
+                if (expires != default)
                     response.Cookies.Add(cookie.AsCookie(expires));
+                else
+                    response.Cookies.Add(cookie.AsCookie());
         }
     }
 }

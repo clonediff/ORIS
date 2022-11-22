@@ -18,25 +18,27 @@ namespace HttpServer2.Controllers
 
 
         [HttpGET("/")]
-        [CheckCookie(typeof(SessionIdCookie), nameof(SessionIdCookie.IsAuthorize), true)]
+        [CheckCookie(typeof(SessionIdCookie))]
         public IEnumerable<Account> GetAccounts()
         {
             return orm.Select<Account>();
         }
 
         [HttpGET("/info")]
-        [CheckCookie(typeof(SessionIdCookie), nameof(SessionIdCookie.IsAuthorize), true)]
+        [CheckCookie(typeof(SessionIdCookie))]
         public Account? GetAccountInfo(
-            [FromCookie(typeof(SessionIdCookie), nameof(SessionIdCookie.Id))] int id)
+            [FromCookie(typeof(SessionIdCookie), nameof(SessionIdCookie.SessionId))] Guid sessionId)
         {
+            var sessionManager = SessionManager.Inst;
+            var accountId = sessionManager.GetSessionInfo(sessionId).AccountId;
             return orm
                 .Select<Account>()
-                .Where(x => x.Id == id)
+                .Where(x => x.Id == accountId)
                 .FirstOrDefault();
         }
 
         [HttpGET("/{id}")]
-        [CheckCookie(typeof(SessionIdCookie), nameof(SessionIdCookie.IsAuthorize), true)]
+        [CheckCookie(typeof(SessionIdCookie))]
         public Account? GetAccountById(int id)
         {
             return orm
@@ -46,12 +48,16 @@ namespace HttpServer2.Controllers
         }
 
         [HttpPOST("/")]
-        public IControllerResult PostAccounts(string login, string password)
+        public IControllerResult Login(string login, string password)
         {
             var account = orm.Select<Account>().Where(x => x.Login == login && x.Password == password).FirstOrDefault();
-            var cookies = new List<(bool, ICookieValue, TimeSpan)>();
+            var cookies = new List<(ICookieValue, TimeSpan)>();
             if (account is not null)
-                cookies.Add((true, new SessionIdCookie { IsAuthorize = true, Id = account.Id }, TimeSpan.FromMinutes(3)));
+            {
+                var sessionManager = SessionManager.Inst;
+                var session = sessionManager.CreateSession(account.Id, login);
+                cookies.Add((new SessionIdCookie { SessionId = session.Id }, default));
+            }
             return new CookieResult(cookies);
         }
     }
